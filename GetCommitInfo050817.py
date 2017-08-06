@@ -13,8 +13,7 @@ import requests
 import json
 from time import sleep
 
-REPO_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 5-3/RepoList2014_New.csv'
-NEWPULL_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 5-3/UpdateCommit/CommitPullRequestList2014.csv'
+
 PW_CSV = '/Users/medapa/Dropbox/HEC/Python/PW/PW_GitHub.csv'
 TRIP = 0
 
@@ -60,7 +59,7 @@ def getGitHubapi(url):
         print("Error code = ",repo_req.status_code,". Error message = ",repo_json['message'])
         return 0   
 
-def getPRinfo(pr_contents,repo_name):
+def getPRinfo(pr_contents,repo_name,NEWPULL_CSV):
     """ This function gets the pull request information for a repository And calls the function to get commit level information """
     pr_row = []
     with open(NEWPULL_CSV, 'at', encoding = 'utf-8', newline='') as writelist:
@@ -147,7 +146,8 @@ def getCommitterinfo(commit_url,write_handle):
     return 0
     
     
-def main():
+def getCommitInfoMain(REPO_CSV,NEWPULL_CSV):
+    """This is the main function that find the repo required and gets the PR and corresponding commit information for each repo"""
     with open(REPO_CSV, 'rt', encoding = 'utf-8') as repolist:
         repo_handle = csv.reader(repolist)
 
@@ -178,7 +178,7 @@ def main():
                     print("************************* Error Searching for Pull Requests for repo - "+ repo_name + " Page No - " + str(page_no))
                     continue
                 
-                getPRinfo(repo_req,repo_name)
+                getPRinfo(repo_req,repo_name,NEWPULL_CSV)
                 
                 """ The section below checks the received header to traverse to the next pages. """
                 
@@ -200,7 +200,7 @@ def main():
                     if repo_req == 0 or repo_req == None:
                         print("************************* Error Searching for Pull Requests for repo - "+ repo_name + " Page No - " + str(page_no))
                         continue                
-                    getPRinfo(repo_req,repo_name)
+                    getPRinfo(repo_req,repo_name,NEWPULL_CSV)
                 
                     link = repo_req.headers.get('link',None)
                     rel = ""
@@ -209,7 +209,45 @@ def main():
                         rel = rel_temp[2:6]
                         print(rel)
 
+def main():
     
+    REPO_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 6-1/RepoList2014_New.csv'
+    NEWPULL_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 6-1/UpdateCommit/CommitPullRequestList2014.csv'
+    getCommitInfoMain(REPO_CSV,NEWPULL_CSV) 
+    
+    REPO_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 6-2/RepoList2014_New.csv'
+    NEWPULL_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 6-2/UpdateCommit/CommitPullRequestList2014.csv'
+    getCommitInfoMain(REPO_CSV,NEWPULL_CSV) 
+    
+    REPO_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 6-3/RepoList2014_New.csv'
+    NEWPULL_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 6-3/UpdateCommit/CommitPullRequestList2014.csv'
+    getCommitInfoMain(REPO_CSV,NEWPULL_CSV) 
+"""    
+    REPO_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 7-1/RepoList2014_New.csv'
+    NEWPULL_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 7-1/UpdateCommit/CommitPullRequestList2014.csv'
+    getCommitInfoMain(REPO_CSV,NEWPULL_CSV) 
+    
+    REPO_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 7-2/RepoList2014_New.csv'
+    NEWPULL_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 7-2/UpdateCommit/CommitPullRequestList2014.csv'
+    getCommitInfoMain(REPO_CSV,NEWPULL_CSV) 
+    
+    REPO_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 8-1/RepoList2014_New.csv'
+    NEWPULL_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 8-1/UpdateCommit/CommitPullRequestList2014.csv'
+    getCommitInfoMain(REPO_CSV,NEWPULL_CSV) 
+    
+    REPO_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 8-2/RepoList2014_New.csv'
+    NEWPULL_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 8-2/UpdateCommit/CommitPullRequestList2014.csv'
+    getCommitInfoMain(REPO_CSV,NEWPULL_CSV) 
+    
+    REPO_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 9-1/RepoList2014_New.csv'
+    NEWPULL_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 9-1/UpdateCommit/CommitPullRequestList2014.csv'
+    getCommitInfoMain(REPO_CSV,NEWPULL_CSV) 
+    
+    REPO_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 9-2/RepoList2014_New.csv'
+    NEWPULL_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 9-2/UpdateCommit/CommitPullRequestList2014.csv'
+    getCommitInfoMain(REPO_CSV,NEWPULL_CSV) 
+    
+"""
 if __name__ == '__main__':
   main()
   
