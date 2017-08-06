@@ -13,8 +13,8 @@ import requests
 import json
 from time import sleep
 
-REPO_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 5-1/RepoList2014_New.csv'
-NEWPULL_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 5-1/UpdateCommit/CommitPullRequestList2014.csv'
+REPO_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 5-3/RepoList2014_New.csv'
+NEWPULL_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 5-3/UpdateCommit/CommitPullRequestList2014.csv'
 PW_CSV = '/Users/medapa/Dropbox/HEC/Python/PW/PW_GitHub.csv'
 TRIP = 0
 
