@@ -13,8 +13,8 @@ import requests
 import json
 from time import sleep
 
-PULL_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 5-3/RepoList2014_New.csv'
-NEWPULL_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 5-3/UpdateCommit/CommitPullRequestList2014.csv'
+REPO_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 5-1/RepoList2014_New.csv'
+NEWPULL_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 5-1/UpdateCommit/CommitPullRequestList2014.csv'
 PW_CSV = '/Users/medapa/Dropbox/HEC/Python/PW/PW_GitHub.csv'
 TRIP = 0
 
@@ -25,10 +25,12 @@ def getGitHubapi(url):
     global TRIP
     """ Get PW info """
     PW_list = []
+    
     with open(PW_CSV, 'rt', encoding = 'utf-8') as PWlist:
         PW_handle = csv.reader(PWlist)
+        del PW_list[:]
         for pw in PW_handle:
-            PW_list = pw
+            PW_list.append(pw)
     if TRIP == 0:
         repo_req = requests.get(url, auth=(PW_list[0][0], PW_list[0][1]))
         print(repo_req.status_code)
@@ -146,15 +148,22 @@ def getCommitterinfo(commit_url,write_handle):
     
     
 def main():
-    with open(PULL_CSV, 'rt', encoding = 'utf-8') as repolist:
+    with open(REPO_CSV, 'rt', encoding = 'utf-8') as repolist:
         repo_handle = csv.reader(repolist)
 
         for repo_row in repo_handle:
             page_no = 1
             
-            if repo_row[0] != "PullRequestEvent" and repo_row[0] != "": 
-                repo_name = repo_row[2]+"/"+repo_row[1]
-                page_no = 1    
+            if repo_row[0] != "REPO_ID" and repo_row[0] != "": 
+                repo_id = repo_row[0]
+                page_no = 1 
+                repoid_url = "https://api.github.com/repositories/"+repo_id
+                repoid_req = getGitHubapi(repoid_url)
+                if repoid_req == 0 or repoid_req == None:
+                    print("************************* Error Searching for repo name for repo - "+ repo_id)
+                    continue
+                repoid_json = repoid_req .json()
+                repo_name = repoid_json['full_name']
                 repo_url = "https://api.github.com/search/issues?q=repo:"+repo_name+"+type:pr+created:<2015-01-01&page="+str(page_no)
 #For 2015 data -                repo_url = "https://api.github.com/search/issues?q=repo:"+repo_name+"+type:pr+created:2015-01-01..2016-01-01&page="+str(page_no)
 
