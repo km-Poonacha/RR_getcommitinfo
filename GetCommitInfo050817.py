@@ -14,7 +14,7 @@ import json
 from time import sleep
 
 
-PW_CSV = '/Users/medapa/Dropbox/HEC/Python/PW/PW_GitHub.csv'
+PW_CSV = 'C:/Users/USEREN/Dropbox/HEC/Python/PW/PW_GitHub.csv'
 TRIP = 0
 
 
@@ -210,44 +210,20 @@ def getCommitInfoMain(REPO_CSV,NEWPULL_CSV):
                         print(rel)
 
 def main():
-    
-    REPO_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 6-1/RepoList2014_New.csv'
-    NEWPULL_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 6-1/UpdateCommit/CommitPullRequestList2014.csv'
-    getCommitInfoMain(REPO_CSV,NEWPULL_CSV) 
-    
-    REPO_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 6-2/RepoList2014_New.csv'
-    NEWPULL_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 6-2/UpdateCommit/CommitPullRequestList2014.csv'
-    getCommitInfoMain(REPO_CSV,NEWPULL_CSV) 
-    
-    REPO_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 6-3/RepoList2014_New.csv'
-    NEWPULL_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 6-3/UpdateCommit/CommitPullRequestList2014.csv'
-    getCommitInfoMain(REPO_CSV,NEWPULL_CSV) 
-"""    
-    REPO_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 7-1/RepoList2014_New.csv'
-    NEWPULL_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 7-1/UpdateCommit/CommitPullRequestList2014.csv'
-    getCommitInfoMain(REPO_CSV,NEWPULL_CSV) 
-    
-    REPO_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 7-2/RepoList2014_New.csv'
-    NEWPULL_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 7-2/UpdateCommit/CommitPullRequestList2014.csv'
-    getCommitInfoMain(REPO_CSV,NEWPULL_CSV) 
-    
-    REPO_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 8-1/RepoList2014_New.csv'
-    NEWPULL_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 8-1/UpdateCommit/CommitPullRequestList2014.csv'
-    getCommitInfoMain(REPO_CSV,NEWPULL_CSV) 
-    
-    REPO_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 8-2/RepoList2014_New.csv'
-    NEWPULL_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 8-2/UpdateCommit/CommitPullRequestList2014.csv'
-    getCommitInfoMain(REPO_CSV,NEWPULL_CSV) 
-    
-    REPO_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 9-1/RepoList2014_New.csv'
-    NEWPULL_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 9-1/UpdateCommit/CommitPullRequestList2014.csv'
-    getCommitInfoMain(REPO_CSV,NEWPULL_CSV) 
-    
+     
     REPO_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 9-2/RepoList2014_New.csv'
     NEWPULL_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 9-2/UpdateCommit/CommitPullRequestList2014.csv'
     getCommitInfoMain(REPO_CSV,NEWPULL_CSV) 
+
+    """
+    # For WINDOWS
     
-"""
+    REPO_CSV = 'C:/Users/USEREN/Dropbox/HEC/Data GitHub/2014/Run 1000/RepoList2014_New.csv'
+    NEWPULL_CSV = 'C:/Users/USEREN/Dropbox/HEC/Data GitHub/2014/Run 1000/UpdateCommit/CommitPullRequestList2014.csv'
+    getCommitInfoMain(REPO_CSV,NEWPULL_CSV) 
+    
+    """
+     
 if __name__ == '__main__':
   main()
   

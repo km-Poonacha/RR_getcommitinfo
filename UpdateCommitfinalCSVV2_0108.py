@@ -1,5 +1,12 @@
 import csv
+from datetime import datetime
 
+def timediff_hrs(sdatetime1, sdatetime2, dtformat):
+    """Calculate the time difference between two string objects """ 
+    daydiff = 0
+    datetimediff = datetime.strptime(sdatetime1, dtformat) - datetime.strptime(sdatetime2, dtformat)
+    daydiff = datetimediff.total_seconds()/(60*60)
+    return daydiff
 def matchcommit_final_2(FINAL2_CSV, COMMITS_CSV, NEW_CSV,MISSINGPR_CSV):
     """Match commit information of PRs in CommitPullRequestList2014.csv with the PRs in Final2014V2_24.csv """    
     with open(NEW_CSV, 'wt', encoding = 'utf-8', newline='' ) as new_append:    
@@ -81,6 +88,9 @@ def matchcommit_final_2(FINAL2_CSV, COMMITS_CSV, NEW_CSV,MISSINGPR_CSV):
                             PR_found = 0
                 
                     row.append(no_authors)
+                    """Calculate time duration of the task for productive deferrel """
+                    prod_deferrel  = timediff_hrs(row[4],row[3],'%Y-%m-%d %H:%M:%S')
+                    row.append(prod_deferrel)
                     new_handle.writerow(row)       
                 elif(row[0] == 'PushEvent'): 
                     """Do nothing """
@@ -88,10 +98,10 @@ def matchcommit_final_2(FINAL2_CSV, COMMITS_CSV, NEW_CSV,MISSINGPR_CSV):
   
 def main():
 
-    FINAL2_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 5-3/Final 2/Final2014V2_24.csv'
-    COMMITS_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 5-3/UpdateCommit/CommitPullRequestList2014.csv'
-    NEW_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 5-3/UpdateCommit/UpdateCommitFinal2014V2_24.csv'
-    MISSINGPR_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 5-3/UpdateCommit/MISSINGPR.csv'
+    FINAL2_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 5-1/Final 2/Final2014V2_24.csv'
+    COMMITS_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 5-1/UpdateCommit/CommitPullRequestList2014.csv'
+    NEW_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 5-1/UpdateCommit/UpdateCommitFinal2014V2_24.csv'
+    MISSINGPR_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 5-1/UpdateCommit/MISSINGPR.csv'
     matchcommit_final_2(FINAL2_CSV, COMMITS_CSV,NEW_CSV,MISSINGPR_CSV)
 
 if __name__ == '__main__':
