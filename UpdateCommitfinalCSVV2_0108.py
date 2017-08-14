@@ -3,10 +3,11 @@ from datetime import datetime
 
 def timediff_hrs(sdatetime1, sdatetime2, dtformat):
     """Calculate the time difference between two string objects """ 
-    daydiff = 0
+    hrdiff = 0
     datetimediff = datetime.strptime(sdatetime1, dtformat) - datetime.strptime(sdatetime2, dtformat)
-    daydiff = datetimediff.total_seconds()/(60*60)
-    return daydiff
+    hrdiff = datetimediff.total_seconds()/(60*60)
+    return hrdiff
+    
 def matchcommit_final_2(FINAL2_CSV, COMMITS_CSV, NEW_CSV,MISSINGPR_CSV):
     """Match commit information of PRs in CommitPullRequestList2014.csv with the PRs in Final2014V2_24.csv """    
     with open(NEW_CSV, 'wt', encoding = 'utf-8', newline='' ) as new_append:    
@@ -31,7 +32,7 @@ def matchcommit_final_2(FINAL2_CSV, COMMITS_CSV, NEW_CSV,MISSINGPR_CSV):
                         else: 
                             if str(row_element[14]) == "TRUE" :
                                 """ If the PR is not found in BQ and it is merged, then append it to the missing csv file """
-                                print("PR not found - ", row_element[9] )
+                                #print("PR not found - ", row_element[9] )
                                 with open(MISSINGPR_CSV, 'at', encoding = 'utf-8', newline='' ) as missing_append:    
                                     missing_handle = csv.writer(missing_append)  
                                     missing_handle.writerow(row_element)
@@ -65,11 +66,11 @@ def matchcommit_final_2(FINAL2_CSV, COMMITS_CSV, NEW_CSV,MISSINGPR_CSV):
                     author_list = []
                     no_authors = 0
                     del author_list[:]
-                    print("Searching for PR - ", PR_id)
+                    #print("Searching for PR - ", PR_id)
                     for element in PR_list:
                         """Find the PR from the PR_list """
                         if PR_id in element:
-                            print("PR found - ", PR_id)
+                           # print("PR found - ", PR_id)
                             PR_found = 1
                             PR_found_list.append(PR_id)
                             continue
@@ -98,11 +99,11 @@ def matchcommit_final_2(FINAL2_CSV, COMMITS_CSV, NEW_CSV,MISSINGPR_CSV):
   
 def main():
 
-    FINAL2_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 5-1/Final 2/Final2014V2_24.csv'
-    COMMITS_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 5-1/UpdateCommit/CommitPullRequestList2014.csv'
-    NEW_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 5-1/UpdateCommit/UpdateCommitFinal2014V2_24.csv'
-    MISSINGPR_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 5-1/UpdateCommit/MISSINGPR.csv'
+    FINAL2_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 1000/Final 2/Final2014V2_24.csv'
+    COMMITS_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 1000/UpdateCommit/CommitPullRequestList2014.csv'
+    NEW_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 1000/UpdateCommit/UpdateCommitFinal2014V2_24.csv'
+    MISSINGPR_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 1000/UpdateCommit/MISSINGPR.csv'
     matchcommit_final_2(FINAL2_CSV, COMMITS_CSV,NEW_CSV,MISSINGPR_CSV)
-
+    
 if __name__ == '__main__':
   main()
