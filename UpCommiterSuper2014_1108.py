@@ -119,10 +119,6 @@ def create_super(UPDATEDFINAL_CSV,SUPER_CSV,NEW_REPO_CSV,INT_SD_CSV):
 
                     """ Get additional repo details from NEW_REPO_CSV"""
                     current_repo = addnewrepodata(current_repo,NEW_REPO_CSV)
-                    
-                    """To overcoem the problems dealing with the first repo """
-
-                    
                                         
                     """ Add SD_FLAG to the super repo """
                     current_repo = findSDflag(current_repo, INT_SD_CSV)
@@ -142,7 +138,9 @@ def create_super(UPDATEDFINAL_CSV,SUPER_CSV,NEW_REPO_CSV,INT_SD_CSV):
 
                     if row[0] == 'PullRequestEvent':
                         pull_no = pull_no + 1
-                        """ Increase task count by number of authors in PR - 1 """
+                        """ Increase task count by number of authors in PR - 1. 
+                        It is important to have the condition > 1 since some of the 
+                        PRs commits can not be found so it is listed as 0 """
                         if int(row[16]) > 1:
                             task_count= task_count + int(row[16])-1
                         tot_commit = tot_commit + int(row[13])
@@ -177,13 +175,13 @@ def create_super(UPDATEDFINAL_CSV,SUPER_CSV,NEW_REPO_CSV,INT_SD_CSV):
     print ('No of repos processed = ', first_row_flag)                          
 
 def main():
-    
-    UPDATEDFINAL_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 5-2/UpdateCommit/UpdateCommitFinal2014V2_24.csv'
-    SUPER_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 5-2/UpdateCommit/UpCommitSuper2014_24.csv'    
-    NEW_REPO_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 5-2/RepoList2014_New.csv'
+
+    UPDATEDFINAL_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 1000/UpdateCommit/UpdateCommitFinal2014V2_24.csv'
+    SUPER_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 1000/UpdateCommit/UpCommitSuper2014_24.csv'    
+    NEW_REPO_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 1000/RepoList2014_New.csv'
     INT_SD_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/New IntegratedSuper/FULLDATAIntegratedSuper2014_June_UPV2.csv'
     create_super(UPDATEDFINAL_CSV,SUPER_CSV,NEW_REPO_CSV,INT_SD_CSV)
     
-
+    
 if __name__ == '__main__':
   main()
