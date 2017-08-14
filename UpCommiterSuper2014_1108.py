@@ -178,9 +178,9 @@ def create_super(UPDATEDFINAL_CSV,SUPER_CSV,NEW_REPO_CSV,INT_SD_CSV):
 
 def main():
     
-    UPDATEDFINAL_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 5-1/UpdateCommit/UpdateCommitFinal2014V2_24.csv'
-    SUPER_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 5-1/UpdateCommit/UpCommitSuper2014_24.csv'    
-    NEW_REPO_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 5-1/RepoList2014_New.csv'
+    UPDATEDFINAL_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 5-2/UpdateCommit/UpdateCommitFinal2014V2_24.csv'
+    SUPER_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 5-2/UpdateCommit/UpCommitSuper2014_24.csv'    
+    NEW_REPO_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 5-2/RepoList2014_New.csv'
     INT_SD_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/New IntegratedSuper/FULLDATAIntegratedSuper2014_June_UPV2.csv'
     create_super(UPDATEDFINAL_CSV,SUPER_CSV,NEW_REPO_CSV,INT_SD_CSV)
     
