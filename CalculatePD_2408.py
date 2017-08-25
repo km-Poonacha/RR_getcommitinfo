@@ -24,10 +24,37 @@ def timediff_hrs(sdatetime1, sdatetime2, dtformat):
     datetimediff = datetime.strptime(sdatetime1, dtformat) - datetime.strptime(sdatetime2, dtformat)
     hrdiff = datetimediff.total_seconds()/(60*60)
     return hrdiff
-def avg_super(repo_id,UPDATEDFINAL_CSV):
-    """ Calculate Average idle time taken for two consecutive tasks by different authors (superposed work) """
-    return 1
     
+def cal_super(repo_id,UPDATEDFINAL_CSV):
+    """ Calculate Average idle time taken for two consecutive tasks by different authors (superposed work) """
+    repo_found = 0
+    idletime_hrs = 0
+    prev_row = []
+    tot_idletime = 0
+    tot_cnt = 0
+    avg_idletime = 0
+    with open(UPDATEDFINAL_CSV, 'rt', encoding = 'utf-8') as UPDATEDFINAL_read:    
+        UPDATEDFINAL_handle = csv.reader(UPDATEDFINAL_read) 
+        for row in UPDATEDFINAL_handle:
+            if row[0] != "PullRequestEvent" and row[0] != "PushEvent" and row[0] != "":                
+                if repo_found == 1:
+                    """If the repo was already found we have reached the end, Calculate avg idle time and return results"""
+                    if tot_idletime != 0:
+                        avg_idletime = tot_idletime/tot_cnt
+                    else: 
+                        avg_idletime = 0
+                    return avg_idletime
+                if row[0] == repo_id:
+                    repo_found = 1 
+            elif repo_found == 1 and (row[0] == "PullRequestEvent" or row[0] == "PushEvent") and (prev_row[0] == "PullRequestEvent" or prev_row[0] == "PushEvent"):
+                if row[2] != prev_row[2]:
+                    idletime_hrs = timediff_hrs(row[4],prev_row[4],'%Y-%m-%d %H:%M:%S')
+                    tot_idletime = tot_idletime + idletime_hrs
+                    tot_cnt = tot_cnt  + 1
+            prev_row = row    
+        return 0
+
+
 def PD1(repo_id,NEWPULL_CSV,UPDATEDFINAL_CSV):
     """ Calculates PD using the measure PD1 = Average idle time taken for two consecutive tasks by different authors (superposed work) / 
     Average idle time taken by two consecutive contributions by different authors within a task/pullrequest (co-work) """
@@ -49,8 +76,11 @@ def PD1(repo_id,NEWPULL_CSV,UPDATEDFINAL_CSV):
                     if tot_cowork != 0:
                         avg_cowork = tot_cowork/cowork_cnt
                         """Call avg_super to calculate the idle time involved in superpsoed work and calulate tehe pd1  """
-                        #pd1 = int(avg_super(repo_id,UPDATEDFINAL_CSV)) / avg_cowork
-                        pd1 = avg_cowork
+                        avg_super = cal_super(repo_id,UPDATEDFINAL_CSV)
+                        if avg_super != 0:    
+                            pd1 = avg_super / avg_cowork
+                        else:
+                            pd1 = ""
                     else: 
                         pd1 = ""
                     return pd1
@@ -61,7 +91,8 @@ def PD1(repo_id,NEWPULL_CSV,UPDATEDFINAL_CSV):
                     cowork_hrs = timediff_hrs(row[4],prev_row[4],'%Y-%m-%dT%H:%M:%SZ')
                     tot_cowork = tot_cowork + cowork_hrs
                     cowork_cnt = cowork_cnt  + 1
-            prev_row = row    
+            prev_row = row
+        return None
 #step 2 
 
 """    
@@ -81,7 +112,7 @@ def cal_PD(NEWPULL_CSV ,UPDATEDFINAL_CSV):
             if row[0] != "PushEvent" and row[0] != "PullRequestEvent":
                 repo_id = row[0]
                 row.append(PD1(repo_id,NEWPULL_CSV,UPDATEDFINAL_CSV))
-                final_list.append(row)
+            final_list.append(row)
   
                 
     """Finally update the PD information i nthe same file by re-writing its contents with the new appended data"""        
