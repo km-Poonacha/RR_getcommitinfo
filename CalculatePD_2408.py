@@ -49,6 +49,8 @@ def cal_super(repo_id,UPDATEDFINAL_CSV):
             elif repo_found == 1 and (row[0] == "PullRequestEvent" or row[0] == "PushEvent") and (prev_row[0] == "PullRequestEvent" or prev_row[0] == "PushEvent"):
                 if row[2] != prev_row[2]:
                     idletime_hrs = timediff_hrs(row[4],prev_row[4],'%Y-%m-%d %H:%M:%S')
+                    if tot_idletime < 0:
+                        tot_idletime = tot_idletime * -1
                     tot_idletime = tot_idletime + idletime_hrs
                     tot_cnt = tot_cnt  + 1
             prev_row = row    
@@ -77,7 +79,7 @@ def PD1(repo_id,NEWPULL_CSV,UPDATEDFINAL_CSV):
                         avg_cowork = tot_cowork/cowork_cnt
                         """Call avg_super to calculate the idle time involved in superpsoed work and calulate tehe pd1  """
                         avg_super = cal_super(repo_id,UPDATEDFINAL_CSV)
-                        if avg_super != 0:    
+                        if avg_super != 0:   
                             pd1 = avg_super / avg_cowork
                         else:
                             pd1 = ""
@@ -95,9 +97,54 @@ def PD1(repo_id,NEWPULL_CSV,UPDATEDFINAL_CSV):
         return None
 #step 2 
 
-"""    
-def PD2:
-    
+   
+def PD2(repo_id,UPDATEDFINAL_CSV):
+    """ PD2 = Average idle time taken for two consecutive tasks by different authors (superposed work) / 
+    Average idle time taken between any two consecutive tasks in the project"""
+    repo_found = 0 
+    prev_row = []
+    nidletime_hrs = 0
+    didletime_hrs = 0
+    ntot_idletime = 0
+    dtot_idletime = 0
+    ntot_cnt = 0
+    dtot_cnt = 0
+    navg_idletime = 0
+    davg_idletime = 0
+    pd2 = 0
+    with open(UPDATEDFINAL_CSV, 'rt', encoding = 'utf-8') as updated_read:    
+        updated_handle = csv.reader(updated_read)  
+        for row in updated_handle:
+            if row[0] != "PullRequestEvent" and row[0] != "PushEvent" and row[0] != "":                
+                if repo_found == 1:
+                    """If the repo was already found we have reached the end, Calculate PD2 and return results"""
+                    if ntot_idletime != 0 and dtot_idletime != 0 :
+                        navg_idletime = ntot_idletime/ntot_cnt
+                        davg_idletime = dtot_idletime/dtot_cnt
+                        pd2 = navg_idletime/davg_idletime
+                        print(repo_id,"  ",navg_idletime,"   ",davg_idletime)
+                    else: 
+                        pd2 = ""
+                    return pd2
+                if row[0] == repo_id:
+                    repo_found = 1 
+            elif repo_found == 1 and (row[0] == "PullRequestEvent" or row[0] == "PushEvent") and (prev_row[0] == "PullRequestEvent" or prev_row[0] == "PushEvent"):
+                if row[2] != prev_row[2]:
+                    nidletime_hrs = timediff_hrs(row[4],prev_row[4],'%Y-%m-%d %H:%M:%S')
+                    if nidletime_hrs < 0:
+                        nidletime_hrs = nidletime_hrs * -1
+                    ntot_idletime = ntot_idletime + nidletime_hrs
+                    ntot_cnt = ntot_cnt  + 1
+
+                didletime_hrs = timediff_hrs(row[4],prev_row[4],'%Y-%m-%d %H:%M:%S')
+                if didletime_hrs < 0:
+                    didletime_hrs = didletime_hrs * -1
+                dtot_idletime = dtot_idletime + didletime_hrs
+                dtot_cnt = dtot_cnt  + 1                    
+            prev_row = row    
+        return ""
+            
+""" 
 def PD3:
 """    
     
@@ -112,6 +159,7 @@ def cal_PD(NEWPULL_CSV ,UPDATEDFINAL_CSV):
             if row[0] != "PushEvent" and row[0] != "PullRequestEvent":
                 repo_id = row[0]
                 row.append(PD1(repo_id,NEWPULL_CSV,UPDATEDFINAL_CSV))
+                row.append(PD2(repo_id,UPDATEDFINAL_CSV))
             final_list.append(row)
   
                 
@@ -123,8 +171,6 @@ def cal_PD(NEWPULL_CSV ,UPDATEDFINAL_CSV):
             PD_handle.writerow(row)  
         
         
-
-
 def main():
     
     NEWPULL_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 5-1/UpdateCommit/CommitPullRequestList2014.csv'    
