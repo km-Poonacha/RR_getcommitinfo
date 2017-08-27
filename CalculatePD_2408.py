@@ -17,6 +17,7 @@ This calculates the productive deferrel using three different measures:
 """
 import csv
 from datetime import datetime
+import numpy as np
 
 def timediff_hrs(sdatetime1, sdatetime2, dtformat):
     """Calculate the time difference between two string objects """ 
@@ -60,7 +61,6 @@ def cal_super(repo_id,UPDATEDFINAL_CSV):
 def PD1(repo_id,NEWPULL_CSV,UPDATEDFINAL_CSV):
     """ Calculates PD using the measure PD1 = Average idle time taken for two consecutive tasks by different authors (superposed work) / 
     Average idle time taken by two consecutive contributions by different authors within a task/pullrequest (co-work) """
-    pd1 = 0
     cowork_hrs = 0
     tot_cowork = 0
     cowork_cnt = 0
@@ -80,12 +80,13 @@ def PD1(repo_id,NEWPULL_CSV,UPDATEDFINAL_CSV):
                         """Call avg_super to calculate the idle time involved in superpsoed work and calulate tehe pd1  """
                         avg_super = cal_super(repo_id,UPDATEDFINAL_CSV)
                         if avg_super != 0:   
-                            pd1 = avg_super / avg_cowork
+                            return avg_super,avg_cowork
+                            #pd1 = avg_super / avg_cowork
+                            
                         else:
-                            pd1 = ""
+                            return "",""
                     else: 
-                        pd1 = ""
-                    return pd1
+                        return "",""
                 if row[0] == repo_id:
                     repo_found = 1 
             elif repo_found == 1 and row[0] == "" and prev_row[0] == "":
@@ -94,7 +95,7 @@ def PD1(repo_id,NEWPULL_CSV,UPDATEDFINAL_CSV):
                     tot_cowork = tot_cowork + cowork_hrs
                     cowork_cnt = cowork_cnt  + 1
             prev_row = row
-        return None
+        return "",""
 #step 2 
 
    
@@ -105,27 +106,16 @@ def PD2(repo_id,UPDATEDFINAL_CSV):
     prev_row = []
     nidletime_hrs = 0
     didletime_hrs = 0
-    ntot_idletime = 0
-    dtot_idletime = 0
-    ntot_cnt = 0
-    dtot_cnt = 0
-    navg_idletime = 0
-    davg_idletime = 0
-    pd2 = 0
+    didletime = []
+    nidletime = []
     with open(UPDATEDFINAL_CSV, 'rt', encoding = 'utf-8') as updated_read:    
         updated_handle = csv.reader(updated_read)  
         for row in updated_handle:
             if row[0] != "PullRequestEvent" and row[0] != "PushEvent" and row[0] != "":                
                 if repo_found == 1:
                     """If the repo was already found we have reached the end, Calculate PD2 and return results"""
-                    if ntot_idletime != 0 and dtot_idletime != 0 :
-                        navg_idletime = ntot_idletime/ntot_cnt
-                        davg_idletime = dtot_idletime/dtot_cnt
-                        pd2 = navg_idletime/davg_idletime
-                        print(repo_id,"  ",navg_idletime,"   ",davg_idletime)
-                    else: 
-                        pd2 = ""
-                    return pd2
+                    return nidletime,didletime
+
                 if row[0] == repo_id:
                     repo_found = 1 
             elif repo_found == 1 and (row[0] == "PullRequestEvent" or row[0] == "PushEvent") and (prev_row[0] == "PullRequestEvent" or prev_row[0] == "PushEvent"):
@@ -133,24 +123,38 @@ def PD2(repo_id,UPDATEDFINAL_CSV):
                     nidletime_hrs = timediff_hrs(row[4],prev_row[4],'%Y-%m-%d %H:%M:%S')
                     if nidletime_hrs < 0:
                         nidletime_hrs = nidletime_hrs * -1
-                    ntot_idletime = ntot_idletime + nidletime_hrs
-                    ntot_cnt = ntot_cnt  + 1
+                    nidletime.append(nidletime_hrs)
 
                 didletime_hrs = timediff_hrs(row[4],prev_row[4],'%Y-%m-%d %H:%M:%S')
                 if didletime_hrs < 0:
                     didletime_hrs = didletime_hrs * -1
-                dtot_idletime = dtot_idletime + didletime_hrs
-                dtot_cnt = dtot_cnt  + 1                    
+                didletime.append(didletime_hrs)                    
             prev_row = row    
-        return ""
+        return nidletime,didletime
             
-""" 
-def PD3:
-"""    
+def PD3(nidletime,didletime):
+    """PD3 = Assess the proportion of tasks with atypical idle time (e.g., 2 standard deviations from the mean). 
+    The time diff is already calculated is already calculated as the task duration of of PR. """
+    ncnt = 0
+    dcnt = 0
+    SD = np.std(didletime)
+    print("SD = ", SD)
+    for ele in nidletime:
+        if ele >= 2*SD:
+            ncnt = ncnt +1
+    for ele in didletime:
+        if ele >=  2*SD:
+            dcnt = dcnt + 1
+    return ncnt, dcnt    
+  
     
 def cal_PD(NEWPULL_CSV ,UPDATEDFINAL_CSV):
     """ This function finds the repo and the details for collecting PD"""
     final_list = []
+    avg_super = 0
+    avg_cowork = 0
+    nidletime = []
+    didletime = []
     del final_list[:]
     with open(UPDATEDFINAL_CSV, 'rt', encoding = 'utf-8') as final_append:    
         final_handle = csv.reader(final_append) 
@@ -158,10 +162,24 @@ def cal_PD(NEWPULL_CSV ,UPDATEDFINAL_CSV):
             
             if row[0] != "PushEvent" and row[0] != "PullRequestEvent":
                 repo_id = row[0]
-                row.append(PD1(repo_id,NEWPULL_CSV,UPDATEDFINAL_CSV))
-                row.append(PD2(repo_id,UPDATEDFINAL_CSV))
+                print("repo = ", repo_id)
+                avg_super,avg_cowork = PD1(repo_id,NEWPULL_CSV,UPDATEDFINAL_CSV)
+                row.append(avg_super)
+                row.append(avg_cowork)
+                nidletime,didletime = PD2(repo_id,UPDATEDFINAL_CSV)
+                if nidletime:
+                    row.append(np.mean(nidletime))
+                else: row.append("")
+                if didletime:
+                    row.append(np.mean(didletime))
+                else: row.append("")
+                ncnt, dcnt = PD3(nidletime,didletime)
+                row.append(ncnt)
+                row.append(dcnt) 
+                row.append(len(nidletime))
+                row.append(len(didletime))
             final_list.append(row)
-  
+
                 
     """Finally update the PD information i nthe same file by re-writing its contents with the new appended data"""        
     with open(UPDATEDFINAL_CSV, 'wt', encoding = 'utf-8', newline='') as PD_append:
