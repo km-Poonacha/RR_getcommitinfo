@@ -147,14 +147,10 @@ def cal_PD(NEWPULL_CSV ,UPDATEDFINAL_CSV):
         
         
 def main():
-    
-    NEWPULL_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 5-1/UpdateCommit/CommitPullRequestList2014.csv'    
-    UPDATEDFINAL_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 5-1/UpdateCommit/UpdateCommitFinal2014V2_24.csv'
-    cal_PD( NEWPULL_CSV ,UPDATEDFINAL_CSV)
-"""
-    NEWPULL_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 5-2/UpdateCommit/CommitPullRequestList2014.csv'    
-    UPDATEDFINAL_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 5-2/UpdateCommit/UpdateCommitFinal2014V2_24.csv'
-    cal_PD( NEWPULL_CSV ,UPDATEDFINAL_CSV)    
-"""    
+        
+    NEWPULL_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 1000/UpdateCommit/CommitPullRequestList2014.csv'    
+    UPDATEDFINAL_CSV = '/Users/medapa/Dropbox/HEC/Data GitHub/2014/Run 1000/UpdateCommit/UpdateCommitFinal2014V2_24.csv'
+    cal_PD( NEWPULL_CSV ,UPDATEDFINAL_CSV) 
+    print("Completed - ",UPDATEDFINAL_CSV )
 if __name__ == '__main__':
   main()
